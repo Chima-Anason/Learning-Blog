@@ -32,12 +32,12 @@ public class PostController {
 
     // Create post  { @route: api/posts,  access: private }
     @PostMapping("")
-    public ResponseEntity<?> createPost(@Valid @RequestBody Post post, BindingResult result){
+    public ResponseEntity<?> createPost(@Valid @RequestBody Post post, @RequestParam String userEmail,BindingResult result){
 
         ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
         if(errorMap!= null) return errorMap;
 
-        Post newPost = postService.saveOrUpdatePost(post);
+        Post newPost = postService.saveOrUpdatePost(post, userEmail);
         return new ResponseEntity<Post>(newPost, HttpStatus.CREATED);
     }
 
@@ -58,7 +58,7 @@ public class PostController {
     @DeleteMapping("/id/{postId}")
     public ResponseEntity<?> deletePostById(@PathVariable Long postId){
         postService.deletePostById(postId);
-        return new ResponseEntity<String>("Post with ID '" + postId + "' was deleted", HttpStatus.OK);
+        return new ResponseEntity<String>("Post with ID '" + postId + "' was deleted successfully", HttpStatus.OK);
     }
 
     // Get post by Title or Content { @route: api/posts/search?searchText=value,  access: private/public }

@@ -10,29 +10,20 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Post {
+public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    @NotBlank(message = "Post title is required")
-    @Column(unique = true)
-    private String title;
-
-    @NotBlank(message = "Post content is required")
+    @NotBlank(message = "Comment Field cannot be blank ")
     private String content;
-
-    @NotBlank(message = "Post cover image is required")
-    private String coverImage;
-
-    private String author;
 
     //Many-to-One relationship with User
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,29 +31,28 @@ public class Post {
     private User user;
 
 
-    //One-to-Many relationship with Comments
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Comment> comments;
+    //Many-to-One relationship with Post
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Post post;
 
+    //Like
 
-    //Likes
-    //Avatar
-
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(updatable = false)
+    @JsonFormat(pattern = "yyyy- MM-dd")
     private Date created_At;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy- MM-dd")
     private Date updated_At;
 
     @PrePersist
-    protected void onCreate(){
+    public void onCreate(){
         this.created_At = new Date();
     }
 
-
     @PreUpdate
-    protected void onUpdate(){
+    public void onUpdate(){
         this.updated_At = new Date();
     }
+
 }

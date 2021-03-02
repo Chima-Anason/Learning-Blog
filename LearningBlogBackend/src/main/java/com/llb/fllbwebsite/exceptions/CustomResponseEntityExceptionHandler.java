@@ -20,7 +20,13 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     @ExceptionHandler
     public final ResponseEntity<Object> handlePostNotFoundException(PostNotFoundException ex, WebRequest request){
-        PostNotFoundExceptioResponse exceptionResponse = new PostNotFoundExceptioResponse(ex.getMessage());
+        PostNotFoundExceptionResponse exceptionResponse = new PostNotFoundExceptionResponse(ex.getMessage());
         return new ResponseEntity<Object>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleUserIdException(UserIdException ex, WebRequest request){
+        UserIdExceptionResponse exceptionResponse = new UserIdExceptionResponse(ex.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 }
