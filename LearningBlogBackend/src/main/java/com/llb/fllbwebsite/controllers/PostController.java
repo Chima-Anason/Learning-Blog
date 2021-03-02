@@ -32,7 +32,7 @@ public class PostController {
 
     // Create post  { @route: api/posts,  access: private }
     @PostMapping("")
-    public ResponseEntity<?> createPost(@Valid @RequestBody Post post, @RequestParam String userEmail,BindingResult result){
+    public ResponseEntity<?> createPost(@RequestParam String userEmail,@Valid @RequestBody Post post, BindingResult result){
 
         ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
         if(errorMap!= null) return errorMap;
