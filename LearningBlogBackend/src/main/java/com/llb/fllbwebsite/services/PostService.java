@@ -1,7 +1,9 @@
 package com.llb.fllbwebsite.services;
 
+import com.llb.fllbwebsite.domain.Category;
 import com.llb.fllbwebsite.domain.Post;
 import com.llb.fllbwebsite.domain.User;
+import com.llb.fllbwebsite.exceptions.CategoryNameException;
 import com.llb.fllbwebsite.exceptions.PostNotFoundException;
 import com.llb.fllbwebsite.exceptions.PostTitleException;
 import com.llb.fllbwebsite.exceptions.UserIdException;
@@ -17,23 +19,30 @@ public class PostService  {
 
     private final PostRepository postRepository;
     private final UserService userService;
+    private final CategoryService categoryService;
 
 
     @Autowired
-    public PostService(PostRepository postRepository, UserService userService) {
+    public PostService(PostRepository postRepository, UserService userService, CategoryService categoryService) {
         this.postRepository = postRepository;
         this.userService = userService;
+        this.categoryService = categoryService;
     }
 
     public Post saveOrUpdatePost(Post post, String userEmail){
         try{
+            //find user and set relationship with post
             User user = userService.findUserByEmail(userEmail);
             post.setUser(user);
             post.setAuthor(user.getUsername());
+
+            //find category and set relationship with post
+            Category category = categoryService.findCategoryByName(post.getPost_Tag());
+            post.setCategory(category);
             return postRepository.save(post);
-        }catch(UserIdException e){
+        }catch(UserIdException | CategoryNameException e){
             throw e;
-        }catch (Exception e){
+        } catch (Exception e){
             throw new PostTitleException("Post title '"  + post.getTitle() + "' has been used");
         }
     }
@@ -65,7 +74,7 @@ public class PostService  {
     public void deletePostById(Long postId){
         Optional<Post> post = postRepository.findById(postId);
         if(!post.isPresent()){
-            throw new PostNotFoundException("Cannot delete: Post with Id '" + postId + "' don't exist");
+            throw new PostNotFoundException("Cannot delete! Post with Id '" + postId + "' don't exist");
         }
         postRepository.deleteById(postId);
     }

@@ -26,6 +26,9 @@ public class Post {
     @Column(unique = true)
     private String title;
 
+    @NotBlank(message = "Category of Post is required")
+    private String post_Tag;
+
     @NotBlank(message = "Post content is required")
     private String content;
 
@@ -45,6 +48,10 @@ public class Post {
     private List<Comment> comments;
 
 
+    //Many-to-One relationship with Category
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Category category;
     //Likes
     //Avatar
 
