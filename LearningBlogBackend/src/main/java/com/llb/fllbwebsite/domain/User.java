@@ -66,8 +66,12 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Comment> comments;
 
+    //One-to-Many relationship with Reaction(Likes)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Reaction> likes;
+
     //Role
-    //Reaction
+
     @Column(updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date registered_At;

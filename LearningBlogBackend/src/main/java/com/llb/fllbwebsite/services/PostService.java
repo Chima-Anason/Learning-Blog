@@ -37,7 +37,7 @@ public class PostService  {
             post.setAuthor(user.getUsername());
 
             //find category and set relationship with post
-            Category category = categoryService.findCategoryByName(post.getPost_Tag());
+            Category category = categoryService.findCategoryByName(post.getCategoryName());
             post.setCategory(category);
             return postRepository.save(post);
         }catch(UserIdException | CategoryNameException e){

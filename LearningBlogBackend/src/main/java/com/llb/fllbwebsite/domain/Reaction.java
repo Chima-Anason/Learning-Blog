@@ -1,5 +1,6 @@
 package com.llb.fllbwebsite.domain;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 @Entity
@@ -16,27 +16,29 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Comment {
+public class Reaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Comment Field cannot be blank ")
-    private String content;
+
+    private Boolean isLiked = false;
+
+    private String userName;
+
+    private String postName;
 
     //Many-to-One relationship with User
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
 
-
     //Many-to-One relationship with Post
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Post post;
 
-    //Like - will be implemented in future version
 
     @Column(updatable = false)
     @JsonFormat(pattern = "yyyy- MM-dd")
@@ -54,5 +56,4 @@ public class Comment {
     public void onUpdate(){
         this.updated_At = new Date();
     }
-
 }

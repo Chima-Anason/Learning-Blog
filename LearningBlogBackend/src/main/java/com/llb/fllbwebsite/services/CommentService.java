@@ -26,19 +26,21 @@ public class CommentService {
 
     public Comment saveOrUpdateComment(Comment comment, String postTitle, String userEmail){
         try {
-            //find the post
-            Post post = postService.findPostByTitle(postTitle);
             //check if user exist
             User user = userService.findUserByEmail(userEmail);
+            //find the post
+            Post post = postService.findPostByTitle(postTitle);
             //set relationship attributes
             comment.setPost(post);
             comment.setUser(user);
+            //save into Or update the  database
             return  commentRepository.save(comment);
         }catch (PostTitleException | UserIdException e) {
             throw e;
         }
 
     }
+
 
     public Iterable<Comment> findAllComments(){
         return commentRepository.findAll();

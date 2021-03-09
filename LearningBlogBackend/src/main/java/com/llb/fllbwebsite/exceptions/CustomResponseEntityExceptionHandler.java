@@ -36,4 +36,11 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         CategoryNameExceptionResponse exceptionResponse = new CategoryNameExceptionResponse(ex.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleReactionNotFoundException(ReactionNotFoundException ex, WebRequest request){
+        ReactionNotFoundExceptionResponse exceptionResponse = new ReactionNotFoundExceptionResponse(ex.getMessage());
+
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }
