@@ -30,28 +30,38 @@ public class PostController {
         this.validationErrorService = validationErrorService;
     }
 
-    // Create post  { @route: api/posts,  access: private }
+    // Create post  { @route: api/posts,  @access: private }
     @PostMapping("")
     public ResponseEntity<?> createPost(@RequestParam String userEmail,@Valid @RequestBody Post post, BindingResult result){
 
         ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
         if(errorMap!= null) return errorMap;
 
-        Post newPost = postService.saveOrUpdatePost(post, userEmail);
+        Post newPost = postService.savePost(post, userEmail);
         return new ResponseEntity<Post>(newPost, HttpStatus.CREATED);
     }
 
-    // Get all post  { @route: api/posts/all,  access: public }
+    //Update post { @route: api/posts/id/:postId,  @access: private }
+    @PatchMapping("/id/{postId}")
+    public ResponseEntity<?> updatePost(@PathVariable Long postId, @Valid @RequestBody Post post, BindingResult result){
+        ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
+        if(errorMap != null) return errorMap;
+
+        Post updatedPost = postService.updatePost(post, postId);
+        return new ResponseEntity<Post>(updatedPost, HttpStatus.OK);
+    }
+
+    // Get all post  { @route: api/posts/all,  @access: public }
     @GetMapping("/all")
     public ResponseEntity<Iterable<Post>> getAllPosts(){
         return new ResponseEntity<Iterable<Post>>(postService.findAllPosts(), HttpStatus.OK);
     }
 
-    // Get post by ID { @route: api/posts/id/:postid,  access: private/public }
+    // Get post by ID { @route: api/posts/id/:postId,  @access: private/public }
     @GetMapping("/id/{postId}")
     public ResponseEntity<?> getPostById(@PathVariable Long postId){
-        Optional<Post> post = postService.findPostById(postId);
-        return new ResponseEntity<Optional<Post>>(post, HttpStatus.OK);
+        Post post = postService.findPostById(postId);
+        return new ResponseEntity<Post>(post, HttpStatus.OK);
     }
 
     // Delete post by ID  { @route: api/posts/id/:postid,  access: private }

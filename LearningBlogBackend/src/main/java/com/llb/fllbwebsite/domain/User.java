@@ -57,7 +57,7 @@ public class User {
     private String avatarImg;
 
     //One-to-many relationship with Post
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Post> posts;
 
 

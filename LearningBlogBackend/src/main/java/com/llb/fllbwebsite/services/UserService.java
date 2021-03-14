@@ -18,7 +18,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User saveOrUpdateUser(User user){
+    public User saveUser(User user){
         // save conditions
         try{
             return userRepository.save(user);
@@ -27,6 +27,20 @@ public class UserService {
         }
 
 
+    }
+
+    public User updateUser(User updateUser, Long userId){
+        //find the  user by userId
+        User foundUser = userRepository.getById(userId);
+        if (foundUser == null){
+            throw new UserIdException("User with Id '" + userId + "' does not exist");
+        }
+
+        //replace the user
+        foundUser = updateUser;
+
+        //save the user
+        return userRepository.save(foundUser);
     }
 
     public Iterable<User> findAllUsers(){

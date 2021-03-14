@@ -29,7 +29,7 @@ public class PostService  {
         this.categoryService = categoryService;
     }
 
-    public Post saveOrUpdatePost(Post post, String userEmail){
+    public Post savePost(Post post, String userEmail){
         try{
             //find user and set relationship with post
             User user = userService.findUserByEmail(userEmail);
@@ -39,6 +39,7 @@ public class PostService  {
             //find category and set relationship with post
             Category category = categoryService.findCategoryByName(post.getCategoryName());
             post.setCategory(category);
+
             return postRepository.save(post);
         }catch(UserIdException | CategoryNameException e){
             throw e;
@@ -47,14 +48,25 @@ public class PostService  {
         }
     }
 
+    public Post updatePost(Post updatedPost, Long postId){
+        //find the post by postId
+        Post foundPost = findPostById(postId);
+
+
+        //Replace the post
+        foundPost = updatedPost;
+        //save the post
+        return postRepository.save(foundPost);
+    }
+
     public Iterable<Post> findAllPosts(){
         return postRepository.findAll();
     }
 
 
-    public Optional<Post> findPostById(Long postId){
-        Optional<Post> post = postRepository.findById(postId);
-        if(!post.isPresent()){
+    public Post findPostById(Long postId){
+        Post post = postRepository.getById(postId);
+        if(post == null){
             throw new PostNotFoundException("Post with Id '" + postId + "' don't exist");
         }
         return post;
@@ -72,11 +84,8 @@ public class PostService  {
     }
 
     public void deletePostById(Long postId){
-        Optional<Post> post = postRepository.findById(postId);
-        if(!post.isPresent()){
-            throw new PostNotFoundException("Cannot delete! Post with Id '" + postId + "' don't exist");
-        }
-        postRepository.deleteById(postId);
+        Post post = findPostById(postId);
+        postRepository.deleteById(post.getId());
     }
 
     public Post findPostByTitle(String postTitle){
