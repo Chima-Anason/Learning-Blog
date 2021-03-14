@@ -33,6 +33,8 @@ public class CommentService {
             //set relationship attributes
             comment.setPost(post);
             comment.setUser(user);
+            comment.setUserName(user.getUsername());
+            comment.setPostName(post.getTitle());
             //save into Or update the  database
             return  commentRepository.save(comment);
         }catch (PostTitleException | UserIdException e) {

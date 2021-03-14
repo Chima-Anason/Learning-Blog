@@ -25,6 +25,12 @@ public class Comment {
     @NotBlank(message = "Comment Field cannot be blank ")
     private String content;
 
+    @Transient
+    private String userName;
+
+    @Transient
+    private String postName;
+
     //Many-to-One relationship with User
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -44,6 +50,12 @@ public class Comment {
 
     @JsonFormat(pattern = "yyyy- MM-dd")
     private Date updated_At;
+
+    @PostLoad
+    protected void onLoad(){
+        userName = user.getUsername();
+        postName = post.getTitle();
+    }
 
     @PrePersist
     public void onCreate(){

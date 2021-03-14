@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,21 +55,22 @@ public class User {
     @NotBlank(message = "Phone number is required")
     @Size(min = 11, max = 11, message = "Invalid mobile number")
     private String phoneNumber;
+
     private String avatarImg;
 
     //One-to-many relationship with Post
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Post> posts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Post> posts = new ArrayList<>();
 
 
 
     //One-to-Many relationship with Comments
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     //One-to-Many relationship with Reaction(Likes)
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Reaction> likes;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Reaction> likes = new ArrayList<>();
 
     //Role
 

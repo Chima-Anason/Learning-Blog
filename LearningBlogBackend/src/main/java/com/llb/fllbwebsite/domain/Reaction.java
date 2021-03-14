@@ -25,8 +25,11 @@ public class Reaction {
 
     private Boolean isLiked = false;
 
+
+    @Transient
     private String userName;
 
+    @Transient
     private String postName;
 
     //Many-to-One relationship with User
@@ -46,6 +49,12 @@ public class Reaction {
 
     @JsonFormat(pattern = "yyyy- MM-dd")
     private Date updated_At;
+
+    @PostLoad
+    protected void onLoad(){
+        userName = user.getUsername();
+        postName = post.getTitle();
+    }
 
     @PrePersist
     public void onCreate(){

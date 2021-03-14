@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,8 +29,8 @@ public class Category {
     private String categoryName;
 
     //One-to-Many relationship with post
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REFRESH,fetch = FetchType.EAGER, orphanRemoval = true)
-    private List<Post> posts;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Post> posts =  new ArrayList<>();
 
     @Column(updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd")

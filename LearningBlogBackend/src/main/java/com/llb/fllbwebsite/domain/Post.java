@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Post title is required")
     @Column(unique = true)
@@ -35,6 +36,7 @@ public class Post {
     @NotBlank(message = "Post cover image is required")
     private String coverImage;
 
+    @Transient
     private String author;
 
     //Many-to-One relationship with User
@@ -43,12 +45,12 @@ public class Post {
     private User user;
 
     //One-to-Many relationship with Comments
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments =  new ArrayList<>();
 
     //One-to-Many relationship with Reaction(Likes)
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Reaction> likes;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Reaction> likes =  new ArrayList<>();
 
 
     //Many-to-One relationship with Category
@@ -64,6 +66,11 @@ public class Post {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updated_At;
+
+    @PostLoad
+    protected void onLoad(){
+        author = user.getUsername();
+    }
 
     @PrePersist
     protected void onCreate(){
