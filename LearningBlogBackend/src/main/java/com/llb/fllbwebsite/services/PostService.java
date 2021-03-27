@@ -29,10 +29,10 @@ public class PostService  {
         this.categoryService = categoryService;
     }
 
-    public Post saveOrUpdatePost(Post post, String userEmail){
+    public Post saveOrUpdatePost(Post post, String username){
         try{
             //find user and set relationship with post
-            User user = userService.findUserByEmail(userEmail);
+            User user = userService.findUserByUsername(username);
             post.setUser(user);
             post.setAuthor(user.getUsername());
 

@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/post")
@@ -26,10 +27,10 @@ public class CommentController {
 
     // Create comment  { @route: api/post/postTitle/comment,  access: private }
     @PostMapping("/{postTitle}/comment")
-    public ResponseEntity<?> createComment( @PathVariable String postTitle, @RequestParam String userEmail,@Valid @RequestBody Comment comment, BindingResult result){
+    public ResponseEntity<?> createComment( @Valid @RequestBody Comment comment, BindingResult result, @PathVariable String postTitle, Principal principal){
         ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
         if(errorMap != null) return errorMap;
-        Comment newComment = commentService.saveOrUpdateComment(comment, postTitle, userEmail);
+        Comment newComment = commentService.saveOrUpdateComment(comment, postTitle, principal.getName());
         return new ResponseEntity<>(newComment, HttpStatus.CREATED);
     }
 

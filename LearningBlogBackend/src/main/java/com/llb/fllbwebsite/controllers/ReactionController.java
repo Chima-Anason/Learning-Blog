@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/post")
 public class ReactionController {
@@ -21,16 +23,16 @@ public class ReactionController {
 
     // Create Like  { @route: api/post/postTitle/like,  access: private }
     @PostMapping("/{postTitle}/like")
-    public ResponseEntity<Reaction> createLike(@PathVariable String postTitle,@RequestParam String userEmail,@RequestBody Reaction reaction){
-        Reaction newReaction = reactionService.saveLike(postTitle, userEmail, reaction);
+    public ResponseEntity<Reaction> createLike(@PathVariable String postTitle, Principal principal, @RequestBody Reaction reaction){
+        Reaction newReaction = reactionService.saveLike(postTitle, principal.getName(), reaction);
         return new ResponseEntity<>(newReaction, HttpStatus.CREATED);
 
     }
 
     // unlike post  { @route: api/post/postTitle/unlike,  access: private }
     @DeleteMapping("/{postTitle}/unlike")
-    public ResponseEntity<String>  removeLike(@PathVariable String postTitle,@RequestParam String userEmail){
-        reactionService.deleteLike(postTitle,userEmail);
+    public ResponseEntity<String>  removeLike(@PathVariable String postTitle,Principal principal){
+        reactionService.deleteLike(postTitle,principal.getName());
         return new ResponseEntity<>("post '" + postTitle + "' successfully unlike " , HttpStatus.OK);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +33,12 @@ public class PostController {
 
     // Create post  { @route: api/posts,  access: private }
     @PostMapping("")
-    public ResponseEntity<?> createPost(@RequestParam String userEmail,@Valid @RequestBody Post post, BindingResult result){
+    public ResponseEntity<?> createPost(@Valid @RequestBody Post post, BindingResult result, Principal principal){
 
         ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
         if(errorMap!= null) return errorMap;
 
-        Post newPost = postService.saveOrUpdatePost(post, userEmail);
+        Post newPost = postService.saveOrUpdatePost(post, principal.getName());
         return new ResponseEntity<Post>(newPost, HttpStatus.CREATED);
     }
 
