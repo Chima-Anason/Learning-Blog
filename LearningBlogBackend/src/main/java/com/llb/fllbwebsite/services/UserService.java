@@ -1,7 +1,9 @@
 package com.llb.fllbwebsite.services;
 
 import com.llb.fllbwebsite.domain.User;
+import com.llb.fllbwebsite.exceptions.RoleNotFoundException;
 import com.llb.fllbwebsite.exceptions.UserIdException;
+import com.llb.fllbwebsite.payload.UserUpdateRequest;
 import com.llb.fllbwebsite.repositories.RoleRepository;
 import com.llb.fllbwebsite.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +16,17 @@ import static com.llb.fllbwebsite.security.SecurityConstants.*;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository userRepository, RoleService roleService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public User saveOrUpdateUser(User user){
+    public User save(User user){
         // save conditions
         try{
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -42,42 +44,53 @@ public class UserService {
 
             //save
             return userRepository.save(user);
+        }catch (RoleNotFoundException e){
+            throw e;
         }catch (Exception e){
             throw new UserIdException("User already exist");
         }
     }
 
-    public void assignRole(User user){
+    public User updateUser(UserUpdateRequest userUpdateRequest, Long userId, String username){
+
+        Long userUpdateRequestId = userUpdateRequest.getId();
+        User authenticatedUser = findUserByUsername(username);
+        String userRole = authenticatedUser.getRole().getRoleName();
+        User storedUser = findUserById(userId);
+
+        if(!userUpdateRequestId.equals(userId)){
+            throw new UserIdException("Update ID does not match the Id on this request path");
+        }
+        if(!authenticatedUser.equals(storedUser) && !userRole.equals(SUPER_ADMIN_ROLE)){
+            throw new UserIdException("You are not allowed to update this user");
+        }
+
+
+        // calls the mapUser function
+        mapUser(userUpdateRequest, storedUser);
+        // updates the database
+        return userRepository.save(storedUser);
+
+    }
+
+    protected void assignRole(User user){
 
         if(!user.getRoleName().equals(SUPER_ADMIN_ROLE) && !user.getRoleName().equals(SUB_ADMIN_ROLE)){
             user.setRoleName(DEFAULT_USER_ROLE);
         }
-        user.setRole(roleRepository.findByRoleName(user.getRoleName()));
 
-        //        Role newRole;
-//        if (user.getRoleName().equals(SUPER_ADMIN_ROLE)){
-//            newRole = roleRepository.findByRoleName(SUPER_ADMIN_ROLE);   // superAdmin role
-//        }else if (user.getRoleName().equals(SUB_ADMIN_ROLE)){
-//            newRole = roleRepository.findByRoleName(SUB_ADMIN_ROLE);    // subAdmin role
-//        }else newRole = roleRepository.findByRoleName(DEFAULT_USER_ROLE);    // user role (by default)
-//
-//        user.setRole(newRole);
+        user.setRole(roleService.findRoleByName(user.getRoleName()));
     }
 
-//    if (user.getRoleName().equals("") || user.getRoleName().equals(DEFAULT_USER_ROLE)){
-//        Role newRole= roleRepository.findByRole_name(DEFAULT_USER_ROLE);
-//        user.setRole(newRole);
-//    }
-//
-//           if (user.getRoleName().equals(SUB_ADMIN_ROLE)){
-//        Role newRole= roleRepository.findByRole_name(SUB_ADMIN_ROLE);
-//        user.setRole(newRole);
-//    }
-//
-//           if (user.getRoleName().equals(SUPER_ADMIN_ROLE)){
-//        Role newRole = roleRepository.findByRole_name(SUPER_ADMIN_ROLE);
-//        user.setRole(newRole);
-//    }
+    // sets user old information to the updated information
+    protected void mapUser(UserUpdateRequest updatedInfo, User oldInfo){
+
+        oldInfo.setUsername(updatedInfo.getUsername());
+        oldInfo.setEmail(updatedInfo.getEmail());
+        oldInfo.setPhoneNumber(updatedInfo.getPhoneNumber());
+        oldInfo.setAvatarImg(updatedInfo.getAvatarImg());
+        oldInfo.setRole(roleService.findRoleByName(updatedInfo.getRoleName()));
+    }
 
 
     public Iterable<User> findAllUsers(){

@@ -3,6 +3,7 @@ package com.llb.fllbwebsite.controllers;
 import com.llb.fllbwebsite.domain.User;
 import com.llb.fllbwebsite.payload.JWTLoginSucessResponse;
 import com.llb.fllbwebsite.payload.LoginRequest;
+import com.llb.fllbwebsite.payload.UserUpdateRequest;
 import com.llb.fllbwebsite.security.JwtTokenProvider;
 import com.llb.fllbwebsite.services.UserService;
 import com.llb.fllbwebsite.services.ValidationErrorService;
@@ -18,6 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.security.Principal;
 
 import static com.llb.fllbwebsite.security.SecurityConstants.TOKEN_PREFIX;
 
@@ -48,7 +51,7 @@ public class UserController {
         userValidator.validate(user, result);
         ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
         if(errorMap != null) return errorMap;
-        User newUser = userService.saveOrUpdateUser(user);
+        User newUser = userService.save(user);
         return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
@@ -69,6 +72,17 @@ public class UserController {
         String jwt = TOKEN_PREFIX + jwtTokenProvider.generateToken(authentication);
 
         return ResponseEntity.ok(new JWTLoginSucessResponse(true, jwt));
+    }
+
+
+    // Update User  [ @route: /api/users/update/{id}  @access: private]
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserUpdateRequest updateRequest, BindingResult result,
+                                        @PathVariable Long userId, Principal principal){
+        ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
+        if(errorMap!= null) return errorMap;
+
+        User updatedUser = userService.updateUser(updateRequest, userId, principal.getName());
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
     // Get all user  { @route: api/users/all,  access: public }

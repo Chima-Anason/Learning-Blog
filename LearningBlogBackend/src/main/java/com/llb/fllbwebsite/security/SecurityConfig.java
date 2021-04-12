@@ -66,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/api/users/all").hasRole(SUPER_ADMIN_ROLE)
+                .antMatchers("/api/users/update/{userId}").authenticated()
                 .antMatchers(
                         "/",
                         "/favicon.ico",
