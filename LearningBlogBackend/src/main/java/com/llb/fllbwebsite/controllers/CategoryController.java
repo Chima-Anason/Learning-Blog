@@ -44,8 +44,8 @@ public class CategoryController {
 
     // Get Category by ID { @route: api/categories/id/:categoryId,  access: private/public }
     @GetMapping("/id/{categoryId}")
-    public ResponseEntity<Optional<Category>> getCategoryById(@PathVariable Long categoryId ){
-        Optional<Category> category = categoryService.findCategoryById(categoryId);
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long categoryId){
+        Category category = categoryService.findCategoryById(categoryId);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
 

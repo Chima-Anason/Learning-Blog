@@ -21,19 +21,19 @@ public class ReactionController {
         this.reactionService = reactionService;
     }
 
-    // Create Like  { @route: api/post/postTitle/like,  access: private }
-    @PostMapping("/{postTitle}/like")
-    public ResponseEntity<Reaction> createLike(@PathVariable String postTitle, Principal principal, @RequestBody Reaction reaction){
-        Reaction newReaction = reactionService.saveLike(postTitle, principal.getName(), reaction);
-        return new ResponseEntity<>(newReaction, HttpStatus.CREATED);
 
+    // Create Like [ @route: /api/post/postId/like  @access: private]
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<Reaction> createLike(@PathVariable Long postId, Principal principal, @RequestBody Reaction reaction){
+        Reaction newReaction = reactionService.saveLike(postId, principal.getName(), reaction);
+        return  new ResponseEntity<>(newReaction, HttpStatus.CREATED);
     }
 
-    // unlike post  { @route: api/post/postTitle/unlike,  access: private }
-    @DeleteMapping("/{postTitle}/unlike")
-    public ResponseEntity<String>  removeLike(@PathVariable String postTitle,Principal principal){
-        reactionService.deleteLike(postTitle,principal.getName());
-        return new ResponseEntity<>("post '" + postTitle + "' successfully unlike " , HttpStatus.OK);
+    // Unlike post [ @route: /api/post/postId/unlike  @access: private]
+    @DeleteMapping("/{postId}/unlike")
+    public ResponseEntity<String> removeLike(@PathVariable Long postId, Principal principal){
+        reactionService.deleteLike(postId, principal.getName());
+        return  new ResponseEntity<>("post '" + postId + "' successfully unliked ", HttpStatus.OK);
     }
 
 

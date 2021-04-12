@@ -48,24 +48,30 @@ public class PostController {
         return new ResponseEntity<Iterable<Post>>(postService.findAllPosts(), HttpStatus.OK);
     }
 
+    // Get all Posts of a User  [ @route: /api/posts/all/user  @access: public]
+    @GetMapping("/all/user")
+    public ResponseEntity<Iterable<Post>> getAllPostsByUser(Principal principal){
+        return new ResponseEntity<Iterable<Post>>(postService.findAllPostsByUser(principal.getName()), HttpStatus.OK);
+    }
+
     // Get post by ID { @route: api/posts/id/:postid,  access: private/public }
     @GetMapping("/id/{postId}")
-    public ResponseEntity<?> getPostById(@PathVariable Long postId){
-        Optional<Post> post = postService.findPostById(postId);
-        return new ResponseEntity<Optional<Post>>(post, HttpStatus.OK);
+    public ResponseEntity<Post> getPostById(@PathVariable Long postId){
+        Post post = postService.findPostById(postId);
+        return new ResponseEntity<Post>(post, HttpStatus.OK);
     }
 
     // Delete post by ID  { @route: api/posts/id/:postid,  access: private }
     @DeleteMapping("/id/{postId}")
-    public ResponseEntity<?> deletePostById(@PathVariable Long postId){
-        postService.deletePostById(postId);
+    public ResponseEntity<?> deletePostById(@PathVariable Long postId, Principal principal){
+        postService.deletePostById(postId, principal.getName());
         return new ResponseEntity<String>("Post with ID '" + postId + "' was deleted successfully", HttpStatus.OK);
     }
 
     // Get post by Title or Content { @route: api/posts/search?searchText=value,  access: private/public }
     @GetMapping("/search")
     public ResponseEntity<?> searchPostByTitleOrContent(@RequestParam(value = "searchText") String searchText){
-        List<Post> foundPosts = postService.findByContentOrTitleIgnoreLetterCase(searchText);
+        List<Post> foundPosts = postService.findPostByContentOrTitleIgnoreLetterCase(searchText);
         return new ResponseEntity<>(foundPosts, HttpStatus.OK);
     }
 

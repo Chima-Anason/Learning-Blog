@@ -25,12 +25,12 @@ public class CommentController {
         this.validationErrorService = validationErrorService;
     }
 
-    // Create comment  { @route: api/post/postTitle/comment,  access: private }
-    @PostMapping("/{postTitle}/comment")
-    public ResponseEntity<?> createComment( @Valid @RequestBody Comment comment, BindingResult result, @PathVariable String postTitle, Principal principal){
+    // Create Comment [ @route: /api/post/postId/comment  @access: private]
+    @PostMapping("/{postId}/comment")
+    public ResponseEntity<?> createComment(@Valid @RequestBody Comment comment, BindingResult result, @PathVariable Long postId, Principal principal){
         ResponseEntity<?> errorMap = validationErrorService.MapValidationService(result);
-        if(errorMap != null) return errorMap;
-        Comment newComment = commentService.saveOrUpdateComment(comment, postTitle, principal.getName());
+        if (errorMap != null) return errorMap;
+        Comment newComment = commentService.saveOrUpdateComment(comment, postId, principal.getName());
         return new ResponseEntity<>(newComment, HttpStatus.CREATED);
     }
 

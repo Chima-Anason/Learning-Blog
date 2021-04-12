@@ -19,6 +19,13 @@ public class CategoryService {
     }
 
 
+    public void categoryDontExistMessage(Category category, String message){
+        if (category == null) {
+            throw new CategoryNameException(message);
+        }
+    }
+
+
     public Category saveOrUpdateCategory(Category category){
         try {
         return categoryRepository.save(category);
@@ -27,21 +34,16 @@ public class CategoryService {
         }
     }
 
-    public Optional<Category> findCategoryById(Long categoryId){
-
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        if(!category.isPresent()){
-            throw new CategoryNameException("Category with Id '" + categoryId + "' don't exist");
-        }
+    public Category findCategoryById(Long categoryId){
+        Category category = categoryRepository.getById(categoryId);
+        categoryDontExistMessage(category, "Category with Id '" + categoryId + "' don't exist");
         return category;
     }
 
     public Category findCategoryByName(String categoryName){
 
         Category category = categoryRepository.findByCategoryName(categoryName);
-        if(category == null){
-            throw new CategoryNameException("Category with name '" + categoryName + "' don't exist");
-        }
+        categoryDontExistMessage(category, "Category with name '" + categoryName + "' don't exist");
         return category;
     }
 
@@ -50,10 +52,7 @@ public class CategoryService {
     }
 
     public void deleteCategoryById(Long categoryId){
-        Optional<Category> category = categoryRepository.findById(categoryId);
-        if(!category.isPresent()){
-            throw new CategoryNameException("Cannot delete! Category with Id '" + categoryId + "' don't exist");
-        }
-        categoryRepository.deleteById(categoryId);
+        Category category = findCategoryById(categoryId);
+        categoryRepository.delete(category);
     }
 }
