@@ -30,6 +30,8 @@ public class JwtTokenProvider {
         claims.put("username", user.getUsername());
         claims.put("fullName", user.getFullName());
         //later add the role of the user --- claims.put("userRole", user.getUserRole);
+        //add the role of the user --- claims.put("userRole", user.getUserRole);
+        claims.put("roleName", user.getRoleName());
 
         return Jwts.builder()
                 .setSubject(userId)

@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import static com.llb.fllbwebsite.security.SecurityConstants.*;
 
 import static com.llb.fllbwebsite.security.SecurityConstants.H2_URL;
 import static com.llb.fllbwebsite.security.SecurityConstants.SIGN_UP_URLS;
@@ -64,6 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .authorizeRequests()
+                .antMatchers("/api/users/all").hasRole(SUPER_ADMIN_ROLE)
                 .antMatchers(
                         "/",
                         "/favicon.ico",
