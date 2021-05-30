@@ -1,7 +1,9 @@
 package com.llb.fllbwebsite.controllers;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.llb.fllbwebsite.domain.Post;
+import com.llb.fllbwebsite.domain.Views;
 import com.llb.fllbwebsite.services.PostService;
 import com.llb.fllbwebsite.services.ValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ public class PostController {
 
     // Get all post  { @route: api/posts/all,  access: public }
     @GetMapping("/all")
+    @JsonView(Views.External.class)
     public ResponseEntity<Iterable<Post>> getAllPosts(){
         return new ResponseEntity<Iterable<Post>>(postService.findAllPosts(), HttpStatus.OK);
     }
@@ -56,6 +59,7 @@ public class PostController {
 
     // Get post by ID { @route: api/posts/id/:postid,  access: private/public }
     @GetMapping("/id/{postId}")
+    @JsonView(Views.Internal.class)
     public ResponseEntity<Post> getPostById(@PathVariable Long postId){
         Post post = postService.findPostById(postId);
         return new ResponseEntity<Post>(post, HttpStatus.OK);

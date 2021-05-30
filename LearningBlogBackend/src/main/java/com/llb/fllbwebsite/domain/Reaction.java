@@ -3,6 +3,7 @@ package com.llb.fllbwebsite.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,9 +21,11 @@ public class Reaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(Views.External.class)
     private Long id;
 
 
+    @JsonView(Views.External.class)
     private Boolean isLiked = false;
 
 
@@ -35,19 +38,23 @@ public class Reaction {
     //Many-to-One relationship with User
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @JsonView(Views.Internal.class)
     private User user;
 
     //Many-to-One relationship with Post
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @JsonView(Views.Internal.class)
     private Post post;
 
 
     @Column(updatable = false)
     @JsonFormat(pattern = "yyyy- MM-dd")
+    @JsonView(Views.External.class)
     private Date created_At;
 
     @JsonFormat(pattern = "yyyy- MM-dd")
+    @JsonView(Views.External.class)
     private Date updated_At;
 
     @PostLoad

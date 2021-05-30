@@ -4,6 +4,7 @@ import com.llb.fllbwebsite.services.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -17,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import static com.llb.fllbwebsite.security.SecurityConstants.*;
 
 import static com.llb.fllbwebsite.security.SecurityConstants.H2_URL;
-import static com.llb.fllbwebsite.security.SecurityConstants.SIGN_UP_URLS;
+
 
 @Configuration
 @EnableWebSecurity
@@ -65,8 +66,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().sameOrigin()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/users/all").hasRole(SUPER_ADMIN_ROLE)
-                .antMatchers("/api/users/update/{userId}").authenticated()
+                .antMatchers(HttpMethod.DELETE, DELETE_USER_URL).hasRole(SUPER_ADMIN_ROLE)
+                .antMatchers(USERS_LIST_URL).hasRole(SUPER_ADMIN_ROLE)
+                .antMatchers(COMMENTS_AND_LIKES_LIST_URLS).hasRole(SUPER_ADMIN_ROLE)
+                .antMatchers(CATEGORY_LIST_URL).hasRole(SUPER_ADMIN_ROLE)
+                .antMatchers(HttpMethod.POST, CREATE_CATEGORY_URL).hasRole(SUPER_ADMIN_ROLE)
+                .antMatchers(HttpMethod.DELETE, DELETE_CATEGORY_URL).hasRole(SUPER_ADMIN_ROLE)
+                .antMatchers(ROLE_URLS).hasRole(SUPER_ADMIN_ROLE)
+                .antMatchers(USER_POSTS_LIST_URL).hasAnyRole(SUPER_ADMIN_ROLE, SUB_ADMIN_ROLE)
+                .antMatchers(HttpMethod.POST, CREATE_POSTS_URL).hasAnyRole(SUPER_ADMIN_ROLE, SUB_ADMIN_ROLE)
+                .antMatchers(HttpMethod.DELETE, DELETE_POSTS_URL).hasAnyRole(SUPER_ADMIN_ROLE, SUB_ADMIN_ROLE)
+                .antMatchers(USER_UPDATE_URL).authenticated()
+                .antMatchers(COMMENT_AND_LIKE_URLS).authenticated()
                 .antMatchers(
                         "/",
                         "/favicon.ico",
@@ -78,7 +89,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js"
                 ).permitAll()
-                .antMatchers(SIGN_UP_URLS).permitAll()
+//                .antMatchers(SIGN_UP_URLS).permitAll()
+                .antMatchers(SIGN_UP_URL, SIGN_IN_URL, GET_USER_URL).permitAll()
+                .antMatchers(POST_URLS).permitAll()
+                .antMatchers(CATEGORY_URLS).permitAll()
                 .antMatchers(H2_URL).permitAll()
                 .anyRequest().authenticated();
 

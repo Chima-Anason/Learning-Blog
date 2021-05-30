@@ -1,6 +1,8 @@
 package com.llb.fllbwebsite.controllers;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.llb.fllbwebsite.domain.User;
+import com.llb.fllbwebsite.domain.Views;
 import com.llb.fllbwebsite.payload.JWTLoginSucessResponse;
 import com.llb.fllbwebsite.payload.LoginRequest;
 import com.llb.fllbwebsite.payload.UserUpdateRequest;
@@ -87,12 +89,14 @@ public class UserController {
 
     // Get all user  { @route: api/users/all,  access: public }
     @GetMapping("/all")
+    @JsonView(Views.External.class)
     public ResponseEntity<Iterable<User>> getAllUsers(){
         return new ResponseEntity<>(userService.findAllUsers(),HttpStatus.OK);
     }
 
     // Get user by ID { @route: api/users/:id,  access: private/public }
     @GetMapping("/id/{userId}")
+    @JsonView(Views.Internal.class)
     public ResponseEntity<User> getUserById(@PathVariable Long userId){
         User user = userService.findUserById(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);

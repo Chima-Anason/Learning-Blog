@@ -1,6 +1,7 @@
 package com.llb.fllbwebsite.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Role {
 
     private String description;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "role" , cascade = CascadeType.ALL)
     private List<User> users = new ArrayList<>();
 }

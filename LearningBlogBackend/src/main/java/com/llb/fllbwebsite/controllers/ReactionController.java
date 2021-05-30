@@ -1,7 +1,9 @@
 package com.llb.fllbwebsite.controllers;
 
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.llb.fllbwebsite.domain.Reaction;
+import com.llb.fllbwebsite.domain.Views;
 import com.llb.fllbwebsite.services.ReactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +41,7 @@ public class ReactionController {
 
     // Get all Reactions  { @route: api/post/likes/all,  access: public }
     @GetMapping("/likes/all")
+    @JsonView(Views.External.class)
     public ResponseEntity<Iterable<Reaction>> getAllLikes(){
         return new ResponseEntity<>(reactionService.findAllPostLikes(),HttpStatus.OK) ;
     }
